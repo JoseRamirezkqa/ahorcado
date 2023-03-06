@@ -1,23 +1,28 @@
 <template>
   <div>
+    <!-- Titulo -->
     <div class="text-center">
       <h1 class="font-bold text-6xl mt-[10px] mb-[30px]">Ahorcado</h1>
     </div>
     <!-- modales-->
     <modales text="Debe ingresar letra" :class="{ hidden: active }" @cambia="cambia" />
-    <modales text="El campo está vacio" :class="{ hidden: activeLetra }" @cambia="cambiaDos"/>
-    <modales text="No se puede ingresar la misma letra dos veces" :class="{ hidden: activeLetraRepetida }" @cambia="cambiaTres"/>
+    <modales text="El campo está vacio" :class="{ hidden: activeLetra }" @cambia="cambiaDos" />
+    <modales text="No se puede ingresar la misma letra dos veces" :class="{ hidden: activeLetraRepetida }"
+      @cambia="cambiaTres" />
     <!-- juego -->
+    <!-- Pantalla de carga --->
     <div class="border border-2 border-black w-[50%] h-[800px] m-auto text-center" :class="{ per: activeBg }">
       <final v-if="!start" text="Elija el modo de juego" @playSolo="playSolo" @play="play" />
-      <div v-if="!incio && start" class="h-[100%] p-[10%] bg-gray-200">
+      <!--Dos jugadores-->
+      <div v-if="!incio && start" class="h-[100%] p-[10%] bg-gray-200 animar">
         <h1 class="font-bold text-6xl ">
           Para empezar el juego Ingrese la palabra el jugador que no va a adivinar
         </h1>
         <input type="text" v-model="palabra" @keyup.enter="save" placeholder="Ingrese la palabra"
           class="border-2 m-[2rem] border-black w-[300px]" autofocus ref="inputPalabra">
       </div>
-      <div v-else-if="incio && !win && !lose">
+      <!--adivinar-->
+      <div v-else-if="incio && !win && !lose" class="animar">
         <input type="text" v-model="letra" @keyup.enter="comprobar" placeholder="digite una letra"
           class="border-2 mt-[30px] mb-[20px] border-black" autofocus maxlength="1" ref="inputLetra">
         <div id="arregloDivs" class="mx-[2rem] flex justify-center mb-[30px]">
@@ -26,10 +31,11 @@
           </div>
         </div>
       </div>
-      <final v-if="win" text="Ganó, felicitaciones" @playSolo="playSolo" @play="play" />
-      <final v-if="lose" text="Perdió, vuelva a intentarlo" @playSolo="playSolo" @play="play" />
       <canvas class=" bg-gray-100 m-auto" ref="lienzo" v-show="incio && !win && !lose">
       </canvas>
+      <!--pantallas final-->
+      <final v-if="win" text="Ganó, felicitaciones" @playSolo="playSolo" @play="play" />
+      <final v-if="lose" text="Perdió, vuelva a intentarlo" @playSolo="playSolo" @play="play" />
     </div>
   </div>
 </template>

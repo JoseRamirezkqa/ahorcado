@@ -9,7 +9,7 @@ export default {
   head: {
     title: 'Ahorcado-proyecto',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'sp'
     },
     meta: [
       { charset: 'utf-8' },
