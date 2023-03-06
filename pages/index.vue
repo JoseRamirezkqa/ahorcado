@@ -4,59 +4,21 @@
       <h1 class="font-bold text-6xl mt-[10px] mb-[30px]">Ahorcado</h1>
     </div>
     <!-- modales-->
-    <div class=" flex justify-center animar w-[100%] " :class="{ hidden: active }">
-      <div class="fixed border text-center border-2 border-black mt-[30px] z-[100] w-[30%] h-[100px] duration-300 bg-white">
-        <h1 class="text-2xl mt-[5px] font-bold">Debe ingresar una palabra</h1>
-        <button v-on:click="cambia" class="bg-[#FB4747] w-[100px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                    rounded-full border border-[2.5px] border-black">
-          Cerrar
-        </button>
-      </div>
-    </div>
-    <div class=" flex justify-center animar w-[100%]" :class="{ hidden: activeLetra }">
-      <div
-        class="fixed border text-center border-2 border-black mt-[30px] z-[100] w-[30%] h-[100px] duration-300 bg-white">
-        <h1 class="text-2xl mt-[5px] font-bold">El campo está Vacio</h1>
-        <button v-on:click="cambiaDos" class="bg-[#FB4747] w-[100px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                     rounded-full border border-[2.5px] border-black">
-          Cerrar
-        </button>
-      </div>
-    </div>
-    <div class=" flex justify-center animar w-[100%]" :class="{ hidden: activeLetraRepetida }">
-      <div
-        class="fixed border text-center border-2 border-black mt-[30px] z-[100] w-[30%] h-[100px] duration-300 bg-white">
-        <h1 class="text-2xl mt-[5px] font-bold">No se puede ingresar la misma letra dos veces</h1>
-        <button v-on:click="cambiaTres" class="bg-[#FB4747] w-[100px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                      rounded-full border border-[2.5px] border-black">
-          Cerrar
-        </button>
-      </div>
-    </div>
+    <modales text="Debe ingresar letra" :class="{ hidden: active }" @cambia="cambia" />
+    <modales text="El campo está vacio" :class="{ hidden: activeLetra }" @cambia="cambiaDos"/>
+    <modales text="No se puede ingresar la misma letra dos veces" :class="{ hidden: activeLetraRepetida }" @cambia="cambiaTres"/>
     <!-- juego -->
     <div class="border border-2 border-black w-[50%] h-[800px] m-auto text-center" :class="{ per: activeBg }">
-      <div v-if="!start" class="my-[15%]">
-        <h1 class="font-bold text-8xl mb-[50px]">
-          Eliga el modo de juego
-        </h1>
-        <button v-on:click="playSolo" class="font-bold text-2xl bg-[#FB4747] w-[300px] h-[80px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                    rounded-full border border-[2.5px] border-black">
-          Jugar solo
-        </button>
-        <button v-on:click="play" class="font-bold text-2xl bg-[#FB4747] w-[300px] h-[80px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                rounded-full border border-[2.5px] border-black">
-          Jugar dos personas
-        </button>
-      </div>
+      <final v-if="!start" text="Elija el modo de juego" @playSolo="playSolo" @play="play" />
       <div v-if="!incio && start" class="h-[100%] p-[10%] bg-gray-200">
         <h1 class="font-bold text-6xl ">
           Para empezar el juego Ingrese la palabra el jugador que no va a adivinar
         </h1>
-        <input type="text" v-model="palabra" v-on:keyup.enter="save" placeholder="Ingrese la palabra"
+        <input type="text" v-model="palabra" @keyup.enter="save" placeholder="Ingrese la palabra"
           class="border-2 m-[2rem] border-black w-[300px]" autofocus ref="inputPalabra">
       </div>
       <div v-else-if="incio && !win && !lose">
-        <input type="text" v-model="letra" v-on:keyup.enter="comprobar" placeholder="digite una letra"
+        <input type="text" v-model="letra" @keyup.enter="comprobar" placeholder="digite una letra"
           class="border-2 mt-[30px] mb-[20px] border-black" autofocus maxlength="1" ref="inputLetra">
         <div id="arregloDivs" class="mx-[2rem] flex justify-center mb-[30px]">
           <div v-for="el in arrayPalabra" class="border-2 border-black w-[50px] h-[50px]  text-center font-bold"
@@ -64,49 +26,16 @@
           </div>
         </div>
       </div>
-      <div class=" flex justify-center animar w-[100%]">
-        <div v-if="win" class="fixed  text-center  mt-[30px] z-[100] w-[45%] pt-[8%] h-[700px] duration-300">
-          <h1 class="font-bold text-8xl mb-[50px]">
-            Ganó, felicitaciones
-          </h1>
-          <button v-on:click="playSolo" class="font-bold text-2xl bg-[#FB4747] w-[300px] h-[80px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                    rounded-full border border-[2.5px] border-black">
-            Jugar solo
-          </button>
-          <button v-on:click="play" class="font-bold text-2xl bg-[#FB4747] w-[300px] h-[80px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                rounded-full border border-[2.5px] border-black">
-            Jugar dos personas
-          </button>
-        </div>
-      </div>
-      <div class=" flex justify-center animar w-[100%]">
-        <div v-if="lose" class="fixed  text-center  mt-[30px] z-[100] w-[45%] pt-[8%] h-[700px] duration-300">
-          <h1 class="font-bold text-8xl mb-[50px]">
-            Perdió, Vuelve a intertarlo
-          </h1>
-          <button v-on:click="playSolo" class="font-bold text-2xl bg-[#FB4747] w-[300px] h-[80px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                    rounded-full border border-[2.5px] border-black">
-            Jugar solo
-          </button>
-          <button v-on:click="play" class="font-bold text-2xl bg-[#FB4747] w-[300px] h-[80px] mt-[10px] hover:bg-[#D00F0F] duration-300 
-                                                rounded-full border border-[2.5px] border-black">
-            Jugar dos personas
-          </button>
-        </div>
-      </div>
+      <final v-if="win" text="Ganó, felicitaciones" @playSolo="playSolo" @play="play" />
+      <final v-if="lose" text="Perdió, vuelva a intentarlo" @playSolo="playSolo" @play="play" />
       <canvas class=" bg-gray-100 m-auto" ref="lienzo" v-show="incio && !win && !lose">
       </canvas>
     </div>
-    <myButton/> 
   </div>
 </template>
 <script>
 import { data } from '../data/palabras.js';
-import myButton from '../components/button.vue'
 export default {
-  components:{
-    myButton
-  },
   data() {
     return {
       incio: false,
@@ -127,12 +56,8 @@ export default {
       contador: 0,
     }
   },
-  mounted() {
-    console.log(data);
-  },
   methods: {
     save() {
-      console.log(data)
       if (this.palabra != "") {
         this.incio = true;
         this.arrayPalabra = Array.from(this.palabra);
@@ -311,7 +236,6 @@ export default {
       this.activeBg = false
       this.contador = 0
       this.palabra = removeAccents(data[parseInt(Math.random() * 5000)])
-      console.log(this.palabra)
       this.save()
     }
   }
