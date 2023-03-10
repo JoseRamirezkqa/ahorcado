@@ -9,6 +9,8 @@
     <modales text="El campo está vacio" :class="{ hidden: activeLetra }" @cambia="cambiaDos" />
     <modales text="No se puede ingresar la misma letra dos veces" :class="{ hidden: activeLetraRepetida }"
       @cambia="cambiaTres" />
+    <modales :text="letras" :class="{ hidden: activeHistorial }" @cambia="cambiaCuatro" />
+    <modales text="la palabra no es la correcta" :class="{ hidden: activeNo }" @cambia="cambiaCinco" />
     <!-- juego -->
     <!-- Pantalla de carga --->
     <div class="border border-2 border-black w-[50%] h-[800px] m-auto text-center" :class="{ per: activeBg }">
@@ -22,10 +24,15 @@
           class="border-2 m-[2rem] border-black w-[300px]" autofocus ref="inputPalabra">
       </div>
       <!--adivinar-->
-      <div v-else-if="incio && !win && !lose" class="animar">
+      <div v-else-if="incio && !win && !lose" class="animar grid grid-cols-3 justify-items-center	">
+        <buttonNew text="Ver historial" @cerrar="historial" />
         <input type="text" v-model="letra" @keyup.enter="comprobar" placeholder="digite una letra"
-          class="border-2 mt-[30px] mb-[20px] border-black" autofocus maxlength="1" ref="inputLetra">
-        <div id="arregloDivs" class="mx-[2rem] flex justify-center mb-[30px]">
+          class="border-2 mt-[30px] mb-[20px] border-black" autofocus v-if="!completa" maxlength="1" ref="inputLetra">
+        <input type="text" v-model="letra" @keyup.enter="comprobarCompleta" placeholder="digite la palabra completa"
+          class="border-2 mt-[30px] mb-[20px] border-black " v-if="completa" autofocus ref="inputLetra">
+        <buttonNew text="Ingresar la palabra completa" @cerrar="completaInput" v-if="!buttonCompleta"/>
+        <buttonNew text="Ingresar una letra" @cerrar="completaInputNo" v-if="buttonCompleta"/>
+        <div id="arregloDivs" class="mx-[2rem] flex justify-center mb-[30px] mt-[20px] col-span-3">
           <div v-for="el in arrayPalabra" class="border-2 border-black w-[50px] h-[50px]  text-center font-bold"
             :ref="el">
           </div>
@@ -54,12 +61,19 @@ export default {
       arrayComprobar: [],
       arrayLetras: [],
       aciertos: 0,
+      aciertosCompleta: 0,
       errores: 0,
       active: true,
       activeLetra: true,
       activeLetraRepetida: true,
       activeBg: false,
+      activeHistorial: true,
+      activeNo: true,
       contador: 0,
+      completa: false,
+      buttonCompleta: false,
+      letras: '',
+      letraCompleta: []
     }
   },
   methods: {
@@ -206,6 +220,16 @@ export default {
       this.$refs.inputLetra.disabled = false;
       this.activeBg = false;
     },
+    cambiaCuatro() {
+      this.activeHistorial = true;
+      this.activeBg = false;
+      this.letras = ''
+    },
+    cambiaCinco() {
+      this.activeNo = true;
+      this.activeBg = false;
+      this.letra = ''
+    },
     play() {
       this.incio = false
       this.win = false
@@ -223,6 +247,10 @@ export default {
       this.activeLetraRepetida = true
       this.activeBg = false
       this.contador = 0
+      this.completa = false;
+      this.buttonCompleta = false;
+      this.aciertosCompleta = 0
+      
     },
     playSolo() {
       this.incio = true
@@ -242,9 +270,50 @@ export default {
       this.activeBg = false
       this.contador = 0
       this.palabra = removeAccents(data[parseInt(Math.random() * 5000)])
+      this.completa = false;
+      this.buttonCompleta = false;
+      this.aciertosCompleta = 0
       this.save()
+    },
+    historial() {
+      this.arrayLetras.forEach(el => {
+        console.log(el)
+        this.letras += el + ','
+        console.log(this.letras)
+      })
+      this.activeHistorial = false;
+      this.activeBg = true;
+    },
+    completaInput() {
+      this.completa = true;
+      this.buttonCompleta = true;
+    },
+    completaInputNo() {
+      this.completa = false;
+      this.buttonCompleta = false;
+    },
+    comprobarCompleta() {
+      this.letraCompleta = this.letra.split('');
+      console.log(this.letraCompleta)
+      for (let i = 0; i < this.arrayPalabra.length; i++) {
+        if (this.arrayPalabra[i] == this.letraCompleta[i]) {
+          this.aciertosCompleta += 1
+          console.log(this.aciertos)
+        }
+      }
+      if (this.aciertosCompleta == this.arrayPalabra.length) {
+        this.win = true;
+      } else {
+        this.activeNo = false;
+        this.activeBg = true;
+        this.aciertosCompleta = 0
+      }
+      this.completa = false;
+      this.buttonCompleta = false;
+
     }
-  }
+  },
+
 }
 const removeAccents = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");

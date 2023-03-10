@@ -1,13 +1,16 @@
 <template>
     <button
-        class="bg-[#FB4747] w-[100px] mt-[10px] hover:bg-[#D00F0F] duration-300 rounded-full border border-[2.5px] border-black
+        class=" w-[200px] mt-[10px] hover:bg-[#9F9C9C] duration-500 rounded-full border border-[2.5px] border-black
         transition ease-in-out delay-150 hover:scale-110" @click="cerrar">
-        Cerrar
+        {{text}}
     </button>
 </template>
 <script>
 export default {
     name: 'buttonCerrar',
+    props: {
+        text: String,
+    },
     methods:{
         cerrar(){
             this.$emit('cerrar')
