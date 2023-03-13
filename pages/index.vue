@@ -2,18 +2,17 @@
   <div>
     <!-- Titulo -->
     <div class="text-center">
-      <h1 class="font-bold text-6xl mt-[10px] mb-[30px]">Ahorcado</h1>
+      <h1 class="font-bold text-6xl mt-[10px] mb-[10px]">Ahorcado</h1>
     </div>
     <!-- modales-->
     <modales text="Debe ingresar letra" :class="{ hidden: active }" @cambia="cambia" />
     <modales text="El campo está vacio" :class="{ hidden: activeLetra }" @cambia="cambiaDos" />
     <modales text="No se puede ingresar la misma letra dos veces" :class="{ hidden: activeLetraRepetida }"
       @cambia="cambiaTres" />
-    <modales :text="letras" :class="{ hidden: activeHistorial }" @cambia="cambiaCuatro" />
     <modales text="la palabra no es la correcta" :class="{ hidden: activeNo }" @cambia="cambiaCinco" />
     <!-- juego -->
     <!-- Pantalla de carga --->
-    <div class="border border-2 border-black w-[50%] h-[800px] m-auto text-center" :class="{ per: activeBg }">
+    <div class="border border-2 border-black w-[50%] h-[850px] m-auto text-center" :class="{ per: activeBg }">
       <final v-if="!start" text="Elija el modo de juego" @playSolo="playSolo" @play="play" />
       <!--Dos jugadores-->
       <div v-if="!incio && start" class="h-[100%] p-[10%] bg-gray-200 animar">
@@ -25,13 +24,12 @@
       </div>
       <!--adivinar-->
       <div v-else-if="incio && !win && !lose" class="animar grid grid-cols-3 justify-items-center	">
-        <buttonNew text="Ver historial" @cerrar="historial" />
+        <buttonNew text="Ingresar una letra" @cerrar="completaInputNo"  />
         <input type="text" v-model="letra" @keyup.enter="comprobar" placeholder="digite una letra"
           class="border-2 mt-[30px] mb-[20px] border-black" autofocus v-if="!completa" maxlength="1" ref="inputLetra">
         <input type="text" v-model="letra" @keyup.enter="comprobarCompleta" placeholder="digite la palabra completa"
           class="border-2 mt-[30px] mb-[20px] border-black " v-if="completa" autofocus ref="inputLetra">
-        <buttonNew text="Ingresar la palabra completa" @cerrar="completaInput" v-if="!buttonCompleta"/>
-        <buttonNew text="Ingresar una letra" @cerrar="completaInputNo" v-if="buttonCompleta"/>
+        <buttonNew text="Ingresar la palabra completa" @cerrar="completaInput" />
         <div id="arregloDivs" class="mx-[2rem] flex justify-center mb-[30px] mt-[20px] col-span-3">
           <div v-for="el in arrayPalabra" class="border-2 border-black w-[50px] h-[50px]  text-center font-bold"
             :ref="el">
@@ -40,6 +38,10 @@
       </div>
       <canvas class=" bg-gray-100 m-auto" ref="lienzo" v-show="incio && !win && !lose">
       </canvas>
+      <div class="border border-black h-[50px] mt-[5px]" v-if="incio && !win && !lose">
+        <h1 class="font-bold">Historial: </h1>
+        <h1>{{ letras }}</h1>
+      </div>
       <!--pantallas final-->
       <final v-if="win" text="Ganó, felicitaciones" @playSolo="playSolo" @play="play" />
       <final v-if="lose" text="Perdió, vuelva a intentarlo" @playSolo="playSolo" @play="play" />
@@ -129,6 +131,8 @@ export default {
         this.activeBg = true
 
       }
+      console.log(this.arrayLetras.toString())
+      this.letras = this.arrayLetras.toString()
     },
     dibujar() {
       this.$refs.lienzo.width = 800;
@@ -219,12 +223,7 @@ export default {
       this.activeLetraRepetida = true;
       this.$refs.inputLetra.disabled = false;
       this.activeBg = false;
-    },
-    cambiaCuatro() {
-      this.activeHistorial = true;
-      this.activeBg = false;
-      this.letras = ''
-    },
+    },  
     cambiaCinco() {
       this.activeNo = true;
       this.activeBg = false;
@@ -250,7 +249,7 @@ export default {
       this.completa = false;
       this.buttonCompleta = false;
       this.aciertosCompleta = 0
-      
+
     },
     playSolo() {
       this.incio = true
@@ -276,11 +275,6 @@ export default {
       this.save()
     },
     historial() {
-      this.arrayLetras.forEach(el => {
-        console.log(el)
-        this.letras += el + ','
-        console.log(this.letras)
-      })
       this.activeHistorial = false;
       this.activeBg = true;
     },
