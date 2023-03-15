@@ -30,16 +30,16 @@
         <input type="text" v-model="letra" @keyup.enter="comprobarCompleta" placeholder="digite la palabra completa"
           class="border-2 mt-[30px] mb-[20px] border-black " v-if="completa" autofocus ref="inputLetra">
         <buttonNew text="Ingresar la palabra completa" @cerrar="completaInput" />
-        <div id="arregloDivs" class="mx-[2rem] flex justify-center mb-[30px] mt-[20px] col-span-3">
+        <div id="arregloDivs" class="mx-[2rem] flex justify-center mb-[10px] mt-[10px] col-span-3">
           <div v-for="el in arrayPalabra" class="border-2 border-black w-[50px] h-[50px]  text-center font-bold"
             :ref="el">
           </div>
         </div>
       </div>
-      <canvas class=" bg-gray-100 m-auto" ref="lienzo" v-show="incio && !win && !lose">
+      <canvas class=" bg-gray-100 m-auto mb-[10px]" ref="lienzo" v-show="incio && !win && !lose">
       </canvas>
-      <div class="border border-black h-[50px] mt-[5px]" v-if="incio && !win && !lose">
-        <h1 class="font-bold">Historial: </h1>
+      <div class="border border-black h-[90px] " v-if="incio && !win && !lose">
+        <h1 class="font-bold text-2xl">Historial: </h1>
         <h1>{{ letras }}</h1>
       </div>
       <!--pantallas final-->
@@ -75,7 +75,7 @@ export default {
       completa: false,
       buttonCompleta: false,
       letras: '',
-      letraCompleta: []
+      letraCompleta: [] 
     }
   },
   methods: {
@@ -249,7 +249,6 @@ export default {
       this.completa = false;
       this.buttonCompleta = false;
       this.aciertosCompleta = 0
-
     },
     playSolo() {
       this.incio = true
@@ -273,10 +272,6 @@ export default {
       this.buttonCompleta = false;
       this.aciertosCompleta = 0
       this.save()
-    },
-    historial() {
-      this.activeHistorial = false;
-      this.activeBg = true;
     },
     completaInput() {
       this.completa = true;
